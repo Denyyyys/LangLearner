@@ -38,7 +38,7 @@ namespace LangLearner.Services
             if (passwordVerifyResult == PasswordVerificationResult.Success)
             { 
                 //var tokenClaims = new TokenClaims() { Email = user.Email, UserId = user.Id };
-                string? token = _identityService.GenerateToken(tokenClaims);
+                //string? token = _identityService.GenerateToken(tokenClaims);
                 return token;
             }
             return null;
