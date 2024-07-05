@@ -37,7 +37,7 @@ namespace LangLearner.Services
             var passwordVerifyResult = _passwordHasher.VerifyHashedPassword(user, user.HashedPassword, userDto.Password);
             if (passwordVerifyResult == PasswordVerificationResult.Success)
             { 
-                var tokenClaims = new TokenClaims() { Email = user.Email, UserId = user.Id };
+                //var tokenClaims = new TokenClaims() { Email = user.Email, UserId = user.Id };
                 string? token = _identityService.GenerateToken(tokenClaims);
                 return token;
             }
