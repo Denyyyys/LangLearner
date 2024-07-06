@@ -59,7 +59,7 @@ namespace testBackend.controllersTests
             IEnumerable<LanguageDto>? languages = result?.Value as IEnumerable<LanguageDto>;
 
             // Assert
-            Assert.Equal(200, result?.StatusCode);
+            Assert.Equal(300, result?.StatusCode);
             Assert.Equal(numberLanguages, languages?.Count());
         }
 
