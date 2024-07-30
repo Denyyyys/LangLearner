@@ -33,7 +33,8 @@ jobs:
       with:
         dotnet-version: 8.x
         cache: true
-        cache-dependency-path: './backend/WebServer'
+        cache-dependency-path: |
+          './backend/WebServer'
   
     - name: Restore dependencies
       run: |
