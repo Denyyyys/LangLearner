@@ -33,12 +33,11 @@ jobs:
       with:
         dotnet-version: 8.x
         cache: true
-        cache-dependency-path: |
-          './backend/WebServer'
-          './tetBackend'
+        cache-dependency-path: './backend/WebServer'
   
     - name: Restore dependencies
       run: |
+        ls './backend/WebServer'
         cd ./backend/WebServer
         dotnet restore --locked-mode
         cd ../../testBackend
