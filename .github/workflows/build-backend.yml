@@ -41,7 +41,7 @@ jobs:
       run: |
         cd ./backend/WebServer
         dotnet restore --locked-mode
-        cd ../../testBackend
+        cd ../testBackend
         dotnet restore --locked-mode
           
     - name: Build
@@ -49,5 +49,5 @@ jobs:
       run: dotnet build --no-restore
       
     - name: Test
-      working-directory: ./testBackend
+      working-directory: ./backend/testBackend
       run: dotnet test --verbosity normal
