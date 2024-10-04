@@ -3,6 +3,7 @@ using LangLearner.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LangLearner.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240729145118_UpdateCourseAvailableLanguage")]
+    partial class UpdateCourseAvailableLanguage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,32 +26,17 @@ namespace LangLearner.Migrations
 
             modelBuilder.Entity("CourseLanguage", b =>
                 {
-                    b.Property<string>("AvailableLanguagesName")
+                    b.Property<int>("CourseAvailableLanguagesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CourseAvailableLanguagesName")
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("CoursesWithAvailableLanguageId")
-                        .HasColumnType("int");
+                    b.HasKey("CourseAvailableLanguagesId", "CourseAvailableLanguagesName");
 
-                    b.HasKey("AvailableLanguagesName", "CoursesWithAvailableLanguageId");
-
-                    b.HasIndex("CoursesWithAvailableLanguageId");
+                    b.HasIndex("CourseAvailableLanguagesName");
 
                     b.ToTable("CourseAvailableLanguages", (string)null);
-                });
-
-            modelBuilder.Entity("CourseUser", b =>
-                {
-                    b.Property<int>("EnrolledCoursesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EnrolledUsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EnrolledCoursesId", "EnrolledUsersId");
-
-                    b.HasIndex("EnrolledUsersId");
-
-                    b.ToTable("UserCourse", (string)null);
                 });
 
             modelBuilder.Entity("LangLearner.Models.Entities.Course", b =>
@@ -82,8 +70,7 @@ namespace LangLearner.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Verified")
                         .HasColumnType("bit");
@@ -95,6 +82,21 @@ namespace LangLearner.Migrations
                     b.HasIndex("TargetLanguageName");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("LangLearner.Models.Entities.CourseUser", b =>
+                {
+                    b.Property<int>("EnrolledCoursesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EnrolledUsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EnrolledCoursesId", "EnrolledUsersId");
+
+                    b.HasIndex("EnrolledUsersId");
+
+                    b.ToTable("CourseUsers");
                 });
 
             modelBuilder.Entity("LangLearner.Models.Entities.Language", b =>
@@ -167,30 +169,15 @@ namespace LangLearner.Migrations
 
             modelBuilder.Entity("CourseLanguage", b =>
                 {
+                    b.HasOne("LangLearner.Models.Entities.Course", null)
+                        .WithMany()
+                        .HasForeignKey("CourseAvailableLanguagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("LangLearner.Models.Entities.Language", null)
                         .WithMany()
-                        .HasForeignKey("AvailableLanguagesName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LangLearner.Models.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesWithAvailableLanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseUser", b =>
-                {
-                    b.HasOne("LangLearner.Models.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("EnrolledCoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LangLearner.Models.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("EnrolledUsersId")
+                        .HasForeignKey("CourseAvailableLanguagesName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -214,6 +201,25 @@ namespace LangLearner.Migrations
                     b.Navigation("TargetLanguage");
                 });
 
+            modelBuilder.Entity("LangLearner.Models.Entities.CourseUser", b =>
+                {
+                    b.HasOne("LangLearner.Models.Entities.Course", "Course")
+                        .WithMany("CourseUsers")
+                        .HasForeignKey("EnrolledCoursesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LangLearner.Models.Entities.User", "User")
+                        .WithMany("CourseUsers")
+                        .HasForeignKey("EnrolledUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("LangLearner.Models.Entities.User", b =>
                 {
                     b.HasOne("LangLearner.Models.Entities.Language", "AppLanguage")
@@ -233,6 +239,11 @@ namespace LangLearner.Migrations
                     b.Navigation("NativeLanguage");
                 });
 
+            modelBuilder.Entity("LangLearner.Models.Entities.Course", b =>
+                {
+                    b.Navigation("CourseUsers");
+                });
+
             modelBuilder.Entity("LangLearner.Models.Entities.Language", b =>
                 {
                     b.Navigation("AppLanguageUsers");
@@ -244,6 +255,8 @@ namespace LangLearner.Migrations
 
             modelBuilder.Entity("LangLearner.Models.Entities.User", b =>
                 {
+                    b.Navigation("CourseUsers");
+
                     b.Navigation("CreatedCourses");
                 });
 #pragma warning restore 612, 618

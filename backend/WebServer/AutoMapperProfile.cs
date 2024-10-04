@@ -9,11 +9,16 @@ namespace LangLearner
     {
         public AutoMapperProfile()
         {
+            CreateMap<CreateCourseDto, Course>()
+                .ForMember(c => c.AvailableLanguages, opt => opt.Ignore());
+            CreateMap<Course, CourseDto>()
+                .ForMember(cdto => cdto.AvailableLanguages, opt => opt.Ignore());
             CreateMap<CreateUserDto, User>();
             CreateMap<LoginUserDto, User>();
             CreateMap<User, UserStatsDto>();
             CreateMap<Language, LanguageDto>();
             CreateMap<LanguageDto, Language>();
+            CreateMap<Course, CourseDto>();
         }
     }
 }

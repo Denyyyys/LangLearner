@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -30,9 +31,9 @@ namespace LangLearner.Models.Entities
         public virtual Language? NativeLanguage { get; set; }
         public virtual Language? AppLanguage { get; set; }
 
-        public IEnumerable<Course>? EnrolledCourses { get; set; } = null;
+        public virtual ICollection<Course> EnrolledCourses { get; set; } = new Collection<Course>();  // enroled courses for user
 
-        public IEnumerable<Course>? CreatedCourses { get; set; } = null;
+        public ICollection<Course> CreatedCourses { get; set; } = new Collection<Course>();
 
 
     }

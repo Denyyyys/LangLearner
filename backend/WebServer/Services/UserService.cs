@@ -7,14 +7,17 @@ using LangLearner.Models.Dtos.Requests;
 using LangLearner.Models.Dtos.Responses;
 using LangLearner.Models.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LangLearner.Services
 {
     public interface IUserService
     {
-        public string Register(CreateUserDto userDto);
-        public string Login(LoginUserDto userDto);
+        string Register(CreateUserDto userDto);
+        string Login(LoginUserDto userDto);
+
+        public UserStatsDto GetStats(int userId);
     }
     public class UserService : IUserService
     {
@@ -33,6 +36,14 @@ namespace LangLearner.Services
             _mapper = mapper;
             _identityService = identityService;
             _languageRepository = languageRepository;
+        }
+
+        public UserStatsDto GetStats(int userId)
+        {
+            User? user = _userRepository.GetUserById(userId) ?? throw new GeneralAPIException("Unexpected error occured. Please try to log in one more time");
+
+            UserStatsDto userStatsDto = _mapper.Map<UserStatsDto>(user);
+            return userStatsDto;
         }
 
         public string Login(LoginUserDto userDto)
@@ -68,7 +79,10 @@ namespace LangLearner.Services
             if(_userRepository.GetUserByEmail(newUser.Email) != null)
                 throw new GeneralAPIException("User with provided email already exists") { StatusCode = 409 };
 
-            if(_languageRepository.GetLanguageByAny(newUser.AppLanguageName) == null || _languageRepository.GetLanguageByAny(newUser.NativeLanguageName) == null)
+            string? newUserAppLanguageName = _languageRepository.GetLanguageByAny(newUser.AppLanguageName)?.Name;
+            string? newUserNativeLanguageName = _languageRepository.GetLanguageByAny(newUser.NativeLanguageName)?.Name;
+            
+            if (newUserAppLanguageName == null || newUserNativeLanguageName == null)
                 throw new GeneralAPIException("Provided application or native language is not supported") { StatusCode = 400 };
 
             newUser = _userRepository.AddUser(newUser);

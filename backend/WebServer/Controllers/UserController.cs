@@ -34,7 +34,6 @@ namespace LangLearner.Controllers
         public ActionResult<TokenDto> Register([FromBody] CreateUserDto userDto)
         {
             string token = _userService.Register(userDto);
-
             return CreatedAtAction(nameof(Register), new TokenDto() { Token=token});
         }
 
@@ -42,24 +41,15 @@ namespace LangLearner.Controllers
         public ActionResult<TokenDto> Login([FromBody] LoginUserDto userDto)
         {
             string token = _userService.Login(userDto);
-            //if (token == null || token == string.Empty)
-            //    return Unauthorized(new ApiError() { ErrorMessage ="Bad credentials provided!", StatusCode=401});
             return Ok(new TokenDto() { Token = token });
         }
 
         [Authorize]
         [HttpGet("stats")]
-        public ActionResult<TokenDto> GetStats()
+        public ActionResult<UserStatsDto> GetStats()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
             int userId = int.Parse(User.Claims.First(c => c.Type == "UserId").Value);
-            User? user = _userRepository.GetUserById(userId) ?? throw new Exception();
-
-            UserStatsDto userStatsDto = _mapper.Map<UserStatsDto>(user);
-
+            UserStatsDto userStatsDto = _userService.GetStats(userId);
             return Ok(userStatsDto);
         }
 

@@ -20,5 +20,8 @@ namespace LangLearner.Models.Entities
         public virtual IEnumerable<User>? NativeLanguageUsers { get; set; } = null;
         public virtual IEnumerable<User>? AppLanguageUsers { get; set; } = null;
         public virtual IEnumerable<Course>? CoursesWithTargetLanguage { get; set; } = null;
+        //public virtual IEnumerable<CourseAvailableLanguages>? CourseAvailableLanguages { get; set; }
+        public virtual ICollection<Course>? CoursesWithAvailableLanguage { get; set; }
+
     }
 }

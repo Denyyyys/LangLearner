@@ -64,10 +64,13 @@ builder.Host.UseNLog();
 builder.Services.AddScoped<ILanguagesService, LanguagesService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IIdentityService, IdentityService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+
 
 // Repositories
 builder.Services.AddScoped<ILanguageRepository, LanguageRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
 // Middlewares
 builder.Services.AddScoped<ErrorHandlingMiddleware>();

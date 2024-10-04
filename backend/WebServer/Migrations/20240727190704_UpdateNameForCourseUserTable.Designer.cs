@@ -3,6 +3,7 @@ using LangLearner.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LangLearner.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240727190704_UpdateNameForCourseUserTable")]
+    partial class UpdateNameForCourseUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,21 +23,6 @@ namespace LangLearner.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CourseLanguage", b =>
-                {
-                    b.Property<string>("AvailableLanguagesName")
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("CoursesWithAvailableLanguageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AvailableLanguagesName", "CoursesWithAvailableLanguageId");
-
-                    b.HasIndex("CoursesWithAvailableLanguageId");
-
-                    b.ToTable("CourseAvailableLanguages", (string)null);
-                });
 
             modelBuilder.Entity("CourseUser", b =>
                 {
@@ -48,7 +36,7 @@ namespace LangLearner.Migrations
 
                     b.HasIndex("EnrolledUsersId");
 
-                    b.ToTable("UserCourse", (string)null);
+                    b.ToTable("CourseUser", (string)null);
                 });
 
             modelBuilder.Entity("LangLearner.Models.Entities.Course", b =>
@@ -82,8 +70,7 @@ namespace LangLearner.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Verified")
                         .HasColumnType("bit");
@@ -163,21 +150,6 @@ namespace LangLearner.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("CourseLanguage", b =>
-                {
-                    b.HasOne("LangLearner.Models.Entities.Language", null)
-                        .WithMany()
-                        .HasForeignKey("AvailableLanguagesName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LangLearner.Models.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesWithAvailableLanguageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CourseUser", b =>

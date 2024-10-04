@@ -1,15 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿using LangLearner.Models.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace LangLearner.Models.Entities
+namespace LangLearner.Models.Dtos.Responses
 {
-    public class Course
+    public class CourseDto
     {
         [Required]
         public int Id { get; set; }
 
         [Required]
-        public int CreatorId { get; set; }
+        public string CreatorUsername { get; set; } = string.Empty;
 
         [Required]
 
@@ -31,18 +31,14 @@ namespace LangLearner.Models.Entities
         public bool Verified { get; set; } = false;
 
         [Required]
-        public int LikesCount { get; set; } = 0;
+        public int LikesCount { get; set; } = 10;
 
         [Required]
         public int DislikesCount { get; set; } = 0;
 
-        public virtual Language TargetLanguage { get; set; } = new Language();
+        public IEnumerable<string> AvailableLanguages { get; set; } = Enumerable.Empty<string>();
 
-        public virtual User Creator { get; set; } = new User();
-
-        public virtual ICollection<User> EnrolledUsers { get; set; } = new Collection<User>(); // enrolled users for course
-
-        public virtual ICollection<Language> AvailableLanguages { get; set; } = new Collection<Language>();
+        public int numberEnrolledUsers { get; set; } = 0;
 
     }
 }
